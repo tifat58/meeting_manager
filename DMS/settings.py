@@ -19,8 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '4p2laa&-w0pi(jsp9i9zz)na%=3r+o27hs435pa^qup(#-p$*%'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,12 +83,8 @@ SESSION_IDLE_TIMEOUT = TIME
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'dms_db',
-        'USER': 'root',
-        'PASSWORD': 'a!2345',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
 
     }
 }
