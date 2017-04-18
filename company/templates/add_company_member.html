@@ -1,0 +1,137 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    New Member Add
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="text-center m-t-lg">
+                    <div class="col-md-offset-1 col-md-10">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Create New Company Member</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <form method="post" class="form-horizontal" action="{% url 'company:new_member' %}" enctype="multipart/form-data" >
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Gender</label>
+                                                <div class="col-sm-2">
+                                                    <select class="form-control" required name="title">
+                                                        <option>Select</option>
+                                                        <option value="1">Mr.</option>
+                                                        <option value="2">Ms.</option>
+
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" name="member_name" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Username</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" name="member_username" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Password</label>
+                                                <div class="col-sm-6">
+                                                    <input type="password" class="form-control" name="member_password" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Retype Password</label>
+                                                <div class="col-sm-6">
+                                                    <input type="password" class="form-control" name="member_password_re" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Photo</label>
+
+
+                                                <div class="col-sm-6">
+                                                    <input type="file" class="form-control" name="image">
+                                                </div>
+                                            </div>
+                                            <!--<div class="form-group">
+                                                <label class="col-sm-2 control-label">Name</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" name="">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" id="data_5">
+                                                <label class="col-sm-2 control-label">Range select</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-daterange input-group" id="datepicker">
+                                                        <input type="text" class="input-sm form-control" name="start" value="{% now "m/d/Y" %}"/>
+                                                        <span class="input-group-addon">to</span>
+                                                        <input type="text" class="input-sm form-control" name="end" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            -->
+
+                                            <div class="form-group">
+                                                <div class="col-sm-1 col-sm-offset-2">
+                                                    <button class="btn btn-primary" type="submit">Create</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+    </script>
+
+{% endblock %}

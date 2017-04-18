@@ -1,0 +1,144 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    New Menu Add
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+    <link href="{% static 'css/plugins/chosen/chosen.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="text-center m-t-lg">
+                    <div class="col-md-offset-1 col-md-10">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Create New Menu</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <form method="post" class="form-horizontal" action="{% url 'account:add_menu' %}" >
+                                            {% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Usergroup</label>
+                                                <div class="col-sm-8">
+                                                    <select data-placeholder="Choose groups" class="chosen-select" multiple style="width:350px;" tabindex="4" name="group">
+
+                                                        <option value="1">CS</option>
+                                                        <option value="2">Director</option>
+                                                        <option value="3">Admin</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Menu Name</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" name="menu_name"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">link</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" name="link"/>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <div class="col-sm-1 col-sm-offset-2">
+                                                    <button class="btn btn-primary" type="submit">Create</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ibox-content">
+                                <table class="table table-bordered" style="text-align: left">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Username</th>
+                                            <th>Company</th>
+                                            <th>Designation</th>
+                                            <th>Active</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for list in user_list %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ list.company_obj.member.name }}</td>
+                                            <td>{{ list.user_obj.username}}</td>
+                                            <td>{{ list.company_obj.member_company.abbreviated_name}}</td>
+                                            <td>{{ list.company_obj.member_designation.designation_title}}</td>
+                                            <td>{{ list.isActive }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'js/plugins/chosen/chosen.jquery.js' %}"></script>
+
+    <script>
+
+        var config = {
+				'.chosen-select'           : {},
+				'.chosen-select-deselect'  : {allow_single_deselect:true},
+				'.chosen-select-no-single' : {disable_search_threshold:10},
+				'.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+				'.chosen-select-width'     : {width:"95%"}
+				}
+			for (var selector in config) {
+				$(selector).chosen(config[selector]);
+			}
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+    </script>
+
+{% endblock %}

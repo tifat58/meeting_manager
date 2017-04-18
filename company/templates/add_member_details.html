@@ -1,0 +1,155 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    Member Details Add
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            {% if message %}
+
+                <div class="col-md-6 col-sm-6 col-md-offset-3">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">x</button>
+                        <p style="text-align: center;">{{ message }} </p>
+                    </div>
+
+                </div>
+
+            {% endif %}
+            <div class="col-lg-12">
+                <div class="text-center m-t-lg">
+                    <div class="col-md-offset-1 col-md-10">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Customise member details</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <form method="post" class="form-horizontal" action="{% url 'company:member_details' %}" >
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Name</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control select2_dropdown" name="member" style="" required>
+                                                        {% for list in member_list %}
+                                                            <option value="{{ list.id }}">{{ list.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Company</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control select2_dropdown" name="company" required>
+                                                        {% for list in company_list %}
+                                                            <option value="{{ list.id }}">{{ list.abbreviated_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Designation</label>
+                                                <div class="col-sm-8">
+                                                    <select class="form-control select2_dropdown" name="designation" required>
+                                                        {% for list in designation_list %}
+                                                            <option value="{{ list.id }}">{{ list.designation_title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group" id="data_5">
+                                                <label class="col-sm-2 control-label">From</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-daterange input-group" id="datepicker">
+                                                        <input type="text" class="input-sm form-control" name="start" value="{% now "m/d/Y" %}"/>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="col-sm-1 col-sm-offset-2">
+                                                    <button class="btn btn-primary" type="submit">Create</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ibox-content">
+                                <table class="table table-bordered" style="text-align: left">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Company</th>
+                                            <th>Designation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for list in member_designation_list %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ list.member.name }}</td>
+                                            <td>{{ list.member_company.abbreviated_name }}</td>
+                                            <td>{{ list.member_designation.designation_title }}</td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+    </script>
+
+{% endblock %}

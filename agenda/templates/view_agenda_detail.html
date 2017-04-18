@@ -1,0 +1,441 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    Agenda Details
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+    <link href="{% static 'css/plugins/sweetalert/sweetalert.css' %}" rel="stylesheet">
+    <link href="{% static 'css/back-to-top/styles.css' %}" rel="stylesheet">
+
+{% endblock block_page_css %}
+
+{% block block_breadcrumb %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-9">
+            <h2>{{ agenda_obj.meeting_agenda.title }}</h2>
+            <!--<ol class="breadcrumb">
+                <li>
+                    <a href="{% url 'start' %}">Home</a>
+                </li>
+
+            </ol> -->
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox-content border-left-right">
+                <img alt="image" class="img-responsive" src="{% static 'img/BoardRoom-Logo.png' %}">
+            </div>
+        </div>
+    </div>
+{% endblock block_breadcrumb %}
+
+{% block block_content %}
+   <!-- <a href="#" class="back-to-bottom">Back to Bottom</a> -->
+    <div class="wrapper wrapper-content  animated fadeInRight article">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="ibox">
+                        <div class="ibox-content" id="content_id">
+                            <div class="pull-right">
+                                <button class="btn btn-white btn-xs" type="button"></button>
+
+                            </div>
+                            <div class="text-center article-title">
+                            <span class="text-muted"><i class="fa fa-clock-o"> {{ agenda_obj.insertDate }}</i> </span>
+                                <h2>
+                                   <strong> {{ agenda_obj.title }} </strong>
+                                </h2>
+                            </div>
+                            {% autoescape off %}
+                                {{ agenda_obj.full_article }}
+                            {% endautoescape %}
+                            <hr>
+                            <div class="row" id="bottom_div">
+                            {% if  user_designation == 'Director' %}
+
+
+                                {% if member_vote_value %}
+                                    <div class="col-md-3">
+                                        <h5>Vote:</h5>
+                                        {% if member_vote_value.vote == '1' %}
+                                            <button class="btn btn-primary btn-xs" type="button" id="">Endorsed</button>
+                                        {% elif member_vote_value.vote == '2' %}
+                                            <button class="btn btn-danger btn-xs" type="button" id="">Opposed</button>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-3" id="div_vote">
+                                        <h5>Vote:</h5>
+                                        <button class="btn btn-primary btn-xs" type="button" id="btn_agree">Endorse</button>
+                                        <button class="btn btn-danger btn-xs" type="button" id="btn_not_agree">Oppose</button>
+                                        <input type="hidden" id="hidden_member_id" value="{{ member_id }}" />
+                                        <input type="hidden" id="hidden_agenda_id" value="{{ agenda_obj.id }}" />
+                                    </div>
+                                {% endif %}
+
+                                <div class="chat-form">
+                                    <div class="col-sm-9 col-md-9">
+                                        <form role="form" action="{% url 'agenda:remarks_add' member_id agenda_obj.id %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <textarea class="form-control" rows="3" placeholder="Write your remarks/messages..." required name="remarks"></textarea>
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" class="btn btn-sm btn-success m-t-n-xs"><strong>Send message</strong></button>
+
+                                            </div>
+
+                                            <!--
+                                            <div class="form-group">
+                                                <div class="col-sm-10">
+                                                    <textarea rows="3" placeholder="Write your remarks/comment... " class="form-control" required name="remarks"></textarea>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button class="btn btn-success btn-xs" type="submit">Send</button>
+                                                </div>
+                                            </div>
+                                            -->
+                                        </form>
+                                    </div>
+
+                                </div>
+                            {% endif %}
+                                <div class="chat-form">
+                                    <div class="col-sm-1 col-md-1">
+
+
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-sm m-t-n-xs" style="background-color: darkslategrey;"><strong><a href="{% url 'agenda_list' agenda_obj.meeting_agenda.id %}" style="color: white;">Back to Agenda List</a></strong></button>
+
+                                            </div>
+
+                                            <!--
+                                            <div class="form-group">
+                                                <div class="col-sm-10">
+                                                    <textarea rows="3" placeholder="Write your remarks/comment... " class="form-control" required name="remarks"></textarea>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button class="btn btn-success btn-xs" type="submit">Send</button>
+                                                </div>
+                                            </div>
+                                            -->
+                                    </div>
+
+                                </div>
+
+                                <!--
+                                <div class="col-md-3">
+                                    <div class="small text-right">
+                                        <h5>Stats:</h5>
+                                        <div> <i class="fa fa-comments-o"> </i> 56 comments </div>
+                                        <i class="fa fa-eye"> </i> 144 views
+                                    </div>
+                                </div>
+                                -->
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+
+                                    <h2 style="margin-top: 20px; margin-bottom: 25px; color: #30487b;"><strong>Remarks:</strong></h2>
+                                    <hr>
+                                <div class="chat-activity-list">
+                                {% for comment in comment_list %}
+
+
+                                        <div class="chat-element">
+                                            <a href="#" class="pull-left">
+                                                <img alt="image" class="img-circle" src="{{ comment.remarks_member.member.photo.url }}">
+                                            </a>
+                                            <div class="media-body ">
+                                                <small class="pull-right text-navy"></small>
+                                                <strong style="color: #0a6aa1;">{{ comment.remarks_member.member.name }}</strong>
+                                                <p class="m-b-xs">
+                                                    {{ comment.comment }}
+                                                </p>
+                                                <small class="text-navy" style="">{{ comment.insertDate }}</small>
+                                            </div>
+                                        </div>
+
+                                {% endfor %}
+                                </div>
+                                    <!--
+                                    <div class="social-feed-box">
+                                        <div class="social-avatar">
+                                            <a href="" class="pull-left">
+                                                <img alt="image" src="img/a5.jpg">
+                                            </a>
+                                            <div class="media-body">
+                                                <a href="#">
+                                                    Monica Flex
+                                                </a>
+                                                <small class="text-muted">Today 4:21 pm - 12.06.2014</small>
+                                            </div>
+                                        </div>
+                                        <div class="social-body">
+                                            <p>
+                                                Many desktop publishing packages and web page editors now use Lorem Ipsum as their
+                                                default model text, and a search for 'lorem ipsum' will uncover many web sites still
+                                                in their infancy. Packages and web page editors now use Lorem Ipsum as their
+                                                default model text.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    -->
+
+
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <!-- Sweet alert -->
+    <script src="{% static 'js/plugins/sweetalert/sweetalert.min.js' %}"></script>
+    <script type="text/javascript">
+        // create the back to top button
+        $('body').prepend('<a href="#" class="back-to-top">Back to Top</a>');
+        $('body').prepend('<a href="#" class="back-to-bottom">Back to bottom</a>');
+
+
+        var amountScrolled = 300;
+        var height = $("#content_id").height();
+        height = height - 800;
+
+        $(window).scroll(function(){
+            if( $(window).scrollTop() > amountScrolled ) {
+                $('a.back-to-top').fadeIn('slow');
+            } else {
+                $('a.back-to-top').fadeOut('slow');
+            }
+
+            if( $(window).scrollTop() < height ) {
+                $('a.back-to-bottom').fadeIn('slow');
+            } else {
+                $('a.back-to-bottom').fadeOut('slow');
+            }
+
+
+        });
+
+        $('a.back-to-top, a.simple-back-to-top').click(function() {
+            $('html, body').animate({
+                scrollTop: 0
+            }, 700);
+            return false;
+        });
+
+        $('a.back-to-bottom').click(function() {
+            $('html, body').animate({
+                scrollTop: $('#bottom_div').offset().top
+            }, 700);
+            return false;
+        });
+        </script>
+
+    <script>
+
+        //For getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+
+        $('#btn_agree').click(function () {
+            swal({
+                title: "Are you sure?",
+                text: "Your vote will be counted as agreed ",
+                type: "info",
+                showCancelButton: true,
+                //confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, I Agree!",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function (isConfirm) {
+                if (!isConfirm) return;
+
+                var csrftoken = getCookie('csrftoken');
+                var member = $("#hidden_member_id").val();
+                var agenda = $("#hidden_agenda_id").val();
+                $.ajax({
+                       url : window.location.href, // the endpoint,commonly same url
+                       type : "POST", // http method
+                       data : { csrfmiddlewaretoken : csrftoken,
+                                vote_value : '1',
+                                member : member,
+                                agenda : agenda
+                        }, // data sent with the post request
+
+                 // handle a successful response
+                 success : function(json) {
+                     setTimeout(function(){
+                         if (json['json_message'] == 'ok') {
+                             swal("Done!", "Your vote has been saved successfully", "success");
+                             $("#div_vote").html("<div class='col-md-3'><h5>Vote:</h5><button class='btn btn-primary btn-xs' type='button' id=''>Approved</button></div>");
+                         }
+                         else{
+                             swal("Not Saved!", "You have already voted", "error");
+                         }
+                      }, 2000);
+
+                 },
+
+                 // handle a non-successful response
+                 error : function(xhr,errmsg,err) {
+                    swal("Error to connect!", "Please try again", "error");
+                 }
+                 });
+
+            });
+        });
+
+    $('#btn_not_agree').click(function () {
+            swal({
+                title: "Are you sure?",
+                text: "Your vote will be counted as not agreed ",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, I am sure!",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function (isConfirm) {
+                if (!isConfirm) return;
+
+                var csrftoken = getCookie('csrftoken');
+                var member = $("#hidden_member_id").val();
+                var agenda = $("#hidden_agenda_id").val();
+                $.ajax({
+                       url : window.location.href, // the endpoint,commonly same url
+                       type : "POST", // http method
+                       data : { csrfmiddlewaretoken : csrftoken,
+                                vote_value : '2',
+                                member : member,
+                                agenda : agenda
+                        }, // data sent with the post request
+
+                 // handle a successful response
+                 success : function(json) {
+                     setTimeout(function(){
+                         if (json['json_message'] == 'ok') {
+                             swal("Done!", "Your vote has been saved successfully", "success");
+                             $("#div_vote").html("<div class='col-md-3'><h5>Vote:</h5><button class='btn btn-danger btn-xs' type='button' id=''>Disapproved</button></div>");
+
+                         }
+                         else{
+                             swal("Not Saved!", "You have already voted", "error");
+                         }
+                      }, 2000);
+
+                 },
+
+                 // handle a non-successful response
+                 error : function(xhr,errmsg,err) {
+                    swal("Error to connect!", "Please try again", "error");
+                 }
+                 });
+
+            });
+        });
+
+    </script>
+
+    <script>
+    /*
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+
+
+        //For doing AJAX post
+
+        //When submit is clicked
+         $("#company_id").change(function(e) {
+
+        //Prevent default submit. Must for Ajax post.Beginner's pit.
+         e.preventDefault();
+
+        //Prepare csrf token
+         var csrftoken = getCookie('csrftoken');
+
+
+        //Collect data from fields
+
+         var company = $('#company_id option:selected').val();
+
+
+        //This is the Ajax post.Observe carefully. It is nothing but details of where_to_post,what_to_post
+        //Send data
+
+         $.ajax({
+               url : window.location.href, // the endpoint,commonly same url
+               type : "POST", // http method
+               data : { csrfmiddlewaretoken : csrftoken,
+               company : company
+         }, // data sent with the post request
+
+         // handle a successful response
+         success : function(json) {
+         console.log(json); // another sanity check
+         //On success show the data posted to server as a message
+         //alert('Hi   '+json['emp_list'][0].e_name);
+        // $('#select2').append('<option value="foo" selected="selected">Foo</option>');
+
+                var select = $('#meeting_id');
+                if(select.prop) {
+                  var options = select.prop('options');
+                }
+                else {
+                  var options = select.attr('options');
+                }
+                $('option', select).remove();
+
+                $.each(json['meeting_list'], function(val, text) {
+                    options[options.length] = new Option(json['meeting_list'][val].meeting_name, json['meeting_list'][val].meeting_id);
+                });
+                //select.val(selectedOption);
+         },
+
+         // handle a non-successful response
+         error : function(xhr,errmsg,err) {
+
+         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+         }
+         });
+        });
+        */
+    </script>
+
+{% endblock %}

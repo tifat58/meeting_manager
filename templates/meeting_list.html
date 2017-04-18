@@ -1,0 +1,174 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+     Meeting
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_breadcrumb %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-9">
+                    <h2>Upcoming Meetings</h2>
+                    <!--<ol class="breadcrumb">
+                        <li>
+                            <a href="{% url 'start' %}">Home</a>
+                        </li>
+
+                    </ol> -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="ibox-content border-left-right">
+                        <img alt="image" class="img-responsive" src="{% static 'img/BoardRoom-Logo.png' %}">
+                    </div>
+                </div>
+            </div>
+{% endblock block_breadcrumb %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5></h5>
+                <div class="ibox-tools">
+                   <!-- <a href="" class="btn btn-primary btn-xs">Create new project</a> -->
+                 </div>
+            </div>
+            <div class="ibox-content">
+            <!--
+                <div class="row m-b-sm m-t-sm">
+                    <div class="col-md-1">
+                        <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" ><i class="fa fa-refresh"></i> Refresh</button>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="input-group"><input type="text" placeholder="Search" class="input-sm form-control"> <span class="input-group-btn">
+                            <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+                    </div>
+                </div>
+                -->
+                <div id="vertical-timeline" class="vertical-container dark-timeline center-orientation">
+
+                    {% for list in meeting_list %}
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-briefcase"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h3>{{ list.title }}</h3>
+                            <p>{{ list.description }}
+                            </p>
+                            <a href="{% url 'agenda_list' list.id %}" class="btn btn-sm btn-primary" style="margin-left: 10px;"> Agenda List</a>
+                            {% if user_designation == "Company Secretary" %}
+
+                            <a href="{% url 'agenda:meeting_dashboard' list.id %}" class="btn btn-sm btn-success" style="margin-left: 10px;"> Dashboard</a>
+                            {% endif %}
+                            <span class="vertical-date">
+                                {{ list.start_date }} <br/>
+                                <small>{{ list.start_date|date:"l" }}</small>
+                            </span>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+        //For getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        //For doing AJAX post
+
+        //When submit is clicked
+         $("#company_id").change(function(e) {
+
+        //Prevent default submit. Must for Ajax post.Beginner's pit.
+         e.preventDefault();
+
+        //Prepare csrf token
+         var csrftoken = getCookie('csrftoken');
+
+
+        //Collect data from fields
+
+         var company = $('#company_id option:selected').val();
+
+
+        //This is the Ajax post.Observe carefully. It is nothing but details of where_to_post,what_to_post
+        //Send data
+         $.ajax({
+               url : window.location.href, // the endpoint,commonly same url
+               type : "POST", // http method
+               data : { csrfmiddlewaretoken : csrftoken,
+               company : company
+         }, // data sent with the post request
+
+         // handle a successful response
+         success : function(json) {
+         console.log(json); // another sanity check
+         //On success show the data posted to server as a message
+         //alert('Hi   '+json['emp_list'][0].e_name);
+        // $('#select2').append('<option value="foo" selected="selected">Foo</option>');
+
+                var select = $('#meeting_id');
+                if(select.prop) {
+                  var options = select.prop('options');
+                }
+                else {
+                  var options = select.attr('options');
+                }
+                $('option', select).remove();
+
+                $.each(json['meeting_list'], function(val, text) {
+                    options[options.length] = new Option(json['meeting_list'][val].meeting_name, json['meeting_list'][val].meeting_id);
+                });
+                //select.val(selectedOption);
+         },
+
+         // handle a non-successful response
+         error : function(xhr,errmsg,err) {
+
+         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+         }
+         });
+        });
+    </script>
+
+{% endblock %}

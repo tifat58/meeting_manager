@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} Meeting Manager | Main view {% endblock title %}</title>
+    {% load staticfiles %}
+    <link rel="icon" type="image/ico" href="{% static 'img/favcon_1.ico' %}">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/plugins/select2/select2.min.css' %}" rel="stylesheet">
+
+    <style type="text/css">
+        .noselect {
+          -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none;   /* Chrome/Safari/Opera */
+          -khtml-user-select: none;    /* Konqueror */
+          -moz-user-select: none;      /* Firefox */
+          -ms-user-select: none;       /* Internet Explorer/Edge */
+          user-select: none;           /* Non-prefixed version, currently
+                                          not supported by any browser */
+        }
+    </style>
+
+    {% block block_page_css %}
+
+    {% endblock %}
+
+</head>
+
+<body oncontextmenu="return false" class="fixed-nav fixed-nav-basic noselect">
+
+<div id="wrapper">
+
+    {% include 'left_menu.html' %}
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-fixed-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="" class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <h3 style="color: #0055aa;">{{ company_name }}</h3>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="fa fa-sign-out"></i> Log out
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        {% block block_breadcrumb %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-9">
+                    <h2></h2>
+                    <!--<ol class="breadcrumb">
+                        <li>
+                            <a href="{% url 'start' %}">Home</a>
+                        </li>
+
+                    </ol> -->
+                </div>
+                <div class="col-lg-3">
+                    <div class="ibox-content border-left-right">
+                        <img alt="image" class="img-responsive" src="{% static 'img/BoardRoom-Logo.png' %}">
+                    </div>
+                </div>
+            </div>
+        {% endblock block_breadcrumb %}
+
+
+        {% block block_content %}
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center m-t-lg">
+                        <h1>
+                            Welcome in INSPINIA Static SeedProject
+                        </h1>
+                        <small>
+                            It is an application skeleton for a typical web app. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock block_content %}
+
+        <div class="footer">
+            <div class="pull-right">
+                <strong>Copyright</strong> MJL Bangladesh Limited &copy; {% now "Y" %}
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="{% static 'js/jquery-2.1.1.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="{% static 'js/inspinia.js' %}"></script>
+<script src="{% static 'js/plugins/pace/pace.min.js' %}"></script>
+
+<script language="javascript">
+    document.onmousedown=disableclick;
+    status="Right Click Disabled";
+    function disableclick(event)
+    {
+      if(event.button==2)
+       {
+         //alert(status);
+         return false;
+       }
+    }
+</script>
+
+<!-- Select2 -->
+<script src="{% static 'js/plugins/select2/select2.full.min.js' %}"></script>
+<script>
+    $(".select2_dropdown").select2({
+        allowClear: false
+    });
+</script>
+
+
+
+{% block block_script %}
+
+{% endblock block_script %}
+</body>
+
+</html>

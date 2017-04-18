@@ -1,0 +1,108 @@
+{% extends 'start.html' %}
+
+{% block title %}
+    Archive
+{% endblock title %}
+
+{% block block_page_css %}
+    {% load staticfiles %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox">
+           <!-- <div class="ibox-title">
+                <h5></h5>
+                <div class="ibox-tools">
+                    <a href="" class="btn btn-primary btn-xs">Create new project</a>
+                 </div>
+            </div>
+            <div class="ibox-content">
+
+                <div class="row m-b-sm m-t-sm">
+                    <div class="col-md-2">
+                        <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" ><i class="fa fa-calendar"></i> Select Range</button>
+                    </div>
+                    <div class="col-md-8" id="data_5">
+                        <div class="input-daterange input-group" id="datepicker">
+                            <input type="text" class="input-sm form-control" name="start" value="" placeholder="Start..."/>
+                            <span class="input-group-addon"></span>
+                            <input type="text" class="input-sm form-control" name="end" value="" placeholder="End..." />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        -->
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Previous Meetings</h5>
+                <div class="ibox-tools">
+                   <!-- <a href="" class="btn btn-primary btn-xs">Create new project</a> -->
+                 </div>
+            </div>
+            <div class="ibox-content">
+                {% if meeting_obj %}
+                {% for meeting in meeting_obj %}
+
+                    <div class="faq-item">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#{{ forloop.counter }}" class="faq-question">{{ meeting.title}}</a>
+                                <small> <i class="fa fa-clock-o"></i> {{ meeting.date }}</small>{% if user_designation == "Company Secretary" %} <a href="{% url 'agenda:meeting_dashboard' meeting.meeting_id %}">dashboard</a> {% endif %}
+                                <P><small> {{ meeting.description }}</small> </P>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="{{ forloop.counter }}" class="panel-collapse collapse ">
+                                    <div class="faq-answer">
+                                        {% for agenda in meeting.agenda_list %}
+                                        <p>
+                                            <a data-toggle="" target="_blank" href="{% url 'agenda:agenda_archive' agenda.id %}" class="">{{ forloop.counter }}.  {{ agenda.title}}</a>
+
+                                        </p>
+                                            {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <div class="col-lg-12">
+                    <div class="text-center m-t-lg">
+                        <h1>
+                            No Previous Meeting History in the Archive
+                        </h1>
+                        <small>
+                           </small>
+                    </div>
+                </div>
+
+                {% endif %}
+            </div>
+        </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+    {% load staticfiles %}
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+    </script>
+{% endblock %}

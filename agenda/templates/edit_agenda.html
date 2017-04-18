@@ -1,0 +1,235 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    Agenda edit
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/plugins/summernote/summernote.css' %}" rel="stylesheet">
+    <link href="{%  static 'css/plugins/summernote/summernote-bs3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="text-center m-t-lg">
+                    <div class="col-md-12">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Update Agenda</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12">
+                                        <form method="post" class="form-horizontal" action="{% url 'agenda:edit_agenda' agenda_obj.id %}" >
+                                            {% csrf_token %}
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Compnay</label>
+                                                <div class="col-sm-3">
+                                                    <input type="text" class="form-control" value="{{ agenda_obj.meeting_agenda.company_meeting.company_name }}" disabled/>
+                                                </div>
+                                                <label class="col-sm-1 control-label">Meeting</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" value="{{ agenda_obj.meeting_agenda.title }}" disabled/>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Title</label>
+                                                <div class="col-sm-8">
+{#                                                    <input type="text" class="form-control" value="{{ agenda_obj.title }}" name="agenda_title"/>#}
+                                                    <textarea class="form-control"  name="agenda_title">{{ agenda_obj.title }}</textarea>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Description</label>
+                                                <div class="col-sm-10">
+
+                                                    <div class="ibox float-e-margins">
+                                                        <div class="ibox-title right">
+                                                            <h5 style="color: darkred;">Click edit to update contents</h5>
+                                                        </div>
+                                                        <div class="ibox-content no-padding" style="text-align: left;">
+
+                                                            <div class="click2edit wrapper p-md summernote">
+                                                                {% autoescape off %}
+                                                                {{ agenda_obj.full_article }}
+                                                                {% endautoescape %}
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="ibox-footer" style="text-align: left;">
+                                                                <button id="edit" class="btn btn-success btn-sm m-l-sm" onclick="edit()" type="button">Edit</button>
+                                                                <button id="save" class="btn btn-success  btn-sm" onclick="save()" type="button">Save</button>
+
+                                                            </div>
+                                                        </div>
+                                                </div>
+                                                <input type="hidden" id="raw_html" value="" name="raw_html"/>
+                                            </div>
+
+                                            <!--<div class="form-group" id="data_5">
+                                                <label class="col-sm-2 control-label">Range select</label>
+                                                <div class="col-sm-8">
+                                                    <div class="input-daterange input-group" id="datepicker">
+                                                        <input type="text" class="input-sm form-control" name="start" value="{% now "m/d/Y" %}"/>
+                                                        <span class="input-group-addon">to</span>
+                                                        <input type="text" class="input-sm form-control" name="end" value="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            -->
+
+                                            <div class="form-group">
+                                                <div class="col-sm-1 col-sm-offset-10">
+                                                    <button class="btn btn-primary" type="submit" id="btn_save">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+    <!-- SUMMERNOTE -->
+    <script src="{% static 'js/plugins/summernote/summernote.min.js' %}"></script>
+
+    <script>
+
+        $(document).ready(function(){
+
+
+
+       });
+        $("#edit").click(function() {
+            $('.click2edit').summernote({focus: true, airMode: true});
+            $("#btn_save").prop('disabled', true);
+        });
+        $("#save").click(function() {
+            var aHTML = $('.click2edit').code(); //save HTML If you need(aHTML: array).
+            $('.click2edit').destroy();
+            $("#raw_html").val(aHTML);
+            $("#btn_save").prop('disabled', false);
+
+        });
+
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+        //For getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        //For doing AJAX post
+
+        //When submit is clicked
+         $("#company_id").change(function(e) {
+
+        //Prevent default submit. Must for Ajax post.Beginner's pit.
+         e.preventDefault();
+
+        //Prepare csrf token
+         var csrftoken = getCookie('csrftoken');
+
+
+        //Collect data from fields
+
+         var company = $('#company_id option:selected').val();
+
+
+        //This is the Ajax post.Observe carefully. It is nothing but details of where_to_post,what_to_post
+        //Send data
+         $.ajax({
+               url : window.location.href, // the endpoint,commonly same url
+               type : "POST", // http method
+               data : { csrfmiddlewaretoken : csrftoken,
+               company : company
+         }, // data sent with the post request
+
+         // handle a successful response
+         success : function(json) {
+         console.log(json); // another sanity check
+         //On success show the data posted to server as a message
+         //alert('Hi   '+json['emp_list'][0].e_name);
+        // $('#select2').append('<option value="foo" selected="selected">Foo</option>');
+
+                var select = $('#meeting_id');
+                if(select.prop) {
+                  var options = select.prop('options');
+                }
+                else {
+                  var options = select.attr('options');
+                }
+                $('option', select).remove();
+
+                $.each(json['meeting_list'], function(val, text) {
+                    options[options.length] = new Option(json['meeting_list'][val].meeting_name, json['meeting_list'][val].meeting_id);
+                });
+                //select.val(selectedOption);
+         },
+
+         // handle a non-successful response
+         error : function(xhr,errmsg,err) {
+
+         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+         }
+         });
+        });
+    </script>
+
+{% endblock %}

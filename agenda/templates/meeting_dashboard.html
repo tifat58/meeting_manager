@@ -1,0 +1,113 @@
+{% extends 'start.html' %}
+
+{% block title %}
+    Meeting Dashboard
+{% endblock title %}
+
+{% block block_page_css %}
+    {% load staticfiles %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5  style="text-align: center;">{{ meeting_obj.title }}</h5>
+                <input type="hidden" value="{{ meeting_obj.id }}" id="meeting_id">
+                <div class="ibox-tools">
+                   <!-- <a href="" class="btn btn-primary btn-xs">Create new project</a> -->
+                 </div>
+            </div>
+            <div class="ibox-content" id="dashboard_body">
+
+                <table class="table table-bordered" style="text-align: center;">
+                    <thead>
+                    <tr>
+                        <th>Agenda / B.O.D.</th>
+                        {% for list in member_list %}
+                            <th>{{ list.member.name }}</th>
+
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for status in vote_status %}
+                            <tr>
+                            {% for col in status %}
+                                <td>{% autoescape off %}{{ col }} {% endautoescape %}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+    {% load staticfiles %}
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+        //For getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function loadlink(){
+            var csrftoken = getCookie('csrftoken');
+            var meeting_id = $("#meeting_id").val();
+            $.ajax({
+                   url : window.location.href, // the endpoint,commonly same url
+                   type : "POST", // http method
+                   data : { csrfmiddlewaretoken : csrftoken,
+                            meeting_id : meeting_id
+                    }, // data sent with the post request
+
+             // handle a successful response
+             success : function(json) {
+                 $("#dashboard_body").html(json['html_string']);
+
+
+             },
+
+             // handle a non-successful response
+             error : function(xhr,errmsg,err) {
+
+             }
+             });
+        }
+
+        loadlink(); // This will run on page load
+        setInterval(function(){
+            loadlink() // this will run after every 5 seconds
+        }, 5000);
+
+    </script>
+{% endblock %}

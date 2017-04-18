@@ -1,0 +1,190 @@
+{% extends 'start.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+    Agenda List
+{% endblock title %}
+
+{% block block_page_css %}
+    <link href="{% static 'css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+{% endblock block_page_css %}
+
+{% block block_content %}
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>All Agenda</h5>
+                <div class="ibox-tools">
+                    <a href="" class="btn btn-primary btn-xs">Create new Agenda</a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row m-b-sm m-t-sm">
+                    <div class="col-md-1">
+                        <button type="button" id="loading-example-btn" class="btn btn-white btn-sm" ><i class="fa fa-refresh"></i> Refresh</button>
+                    </div>
+                    <div class="col-md-11">
+                        <div class="input-group"><input type="text" placeholder="Search" class="input-sm form-control"> <span class="input-group-btn">
+                            <button type="button" class="btn btn-sm btn-primary"> Go!</button> </span></div>
+                    </div>
+                </div>
+
+                <div class="project-list">
+
+                    <table class="table table-hover">
+                        <tbody>
+                        {% for list in active_agenda_list %}
+                        <tr>
+                            <td class="project-status">
+                                <span class="label label-primary">Active</span>
+                            </td>
+                            <td class="project-title">
+                                <a href="{% url 'agenda:agenda_detail_view' list.id %}">{{ list.title }}</a>
+                                <br/>
+                                <small>Created: {{ list.insertDate }}</small>
+                            </td>
+                            <td class="project-completion">
+                                    <small>Completion with: 48%</small>
+                                    <div class="progress progress-mini">
+                                        <div style="width: 48%;" class="progress-bar"></div>
+                                    </div>
+                            </td>
+                            <!--<td class="project-people">
+                                <a href=""><img alt="image" class="img-circle" src="img/a3.jpg"></a>
+                                <a href=""><img alt="image" class="img-circle" src="img/a1.jpg"></a>
+                                <a href=""><img alt="image" class="img-circle" src="img/a2.jpg"></a>
+                                <a href=""><img alt="image" class="img-circle" src="img/a4.jpg"></a>
+                                <a href=""><img alt="image" class="img-circle" src="img/a5.jpg"></a>
+                            </td>
+                            -->
+                            <td class="project-actions">
+                                <a href="{% url 'agenda:agenda_detail_view' list.id %}" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                <a href="{% url 'agenda:edit_agenda' list.id %}" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                       <!--
+                        <tr>
+                            <td class="project-status">
+                                <span class="label label-default">Unactive</span>
+                            </td>
+                            <td class="project-title">
+                                <a href="project_detail.html">Many desktop publishing packages and web</a>
+                                <br/>
+                                <small>Created 10.08.2014</small>
+                            </td>
+                            <td class="project-completion">
+                                <small>Completion with: 8%</small>
+                                <div class="progress progress-mini">
+                                    <div style="width: 8%;" class="progress-bar"></div>
+                                </div>
+                            </td>
+                            <td class="project-people">
+                                <a href=""><img alt="image" class="img-circle" src="img/a5.jpg"></a>
+                                <a href=""><img alt="image" class="img-circle" src="img/a3.jpg"></a>
+                            </td>
+                            <td class="project-actions">
+                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+                                <a href="#" class="btn btn-white btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                            </td>
+                        </tr>
+                        -->
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock block_content %}
+
+{% block block_script %}
+
+    <script src="{% static 'js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+
+    <script>
+
+        $('#data_5 .input-daterange').datepicker({
+            keyboardNavigation: false,
+            forceParse: false,
+            autoclose: true
+        });
+
+        //For getting CSRF token
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        //For doing AJAX post
+
+        //When submit is clicked
+         $("#company_id").change(function(e) {
+
+        //Prevent default submit. Must for Ajax post.Beginner's pit.
+         e.preventDefault();
+
+        //Prepare csrf token
+         var csrftoken = getCookie('csrftoken');
+
+
+        //Collect data from fields
+
+         var company = $('#company_id option:selected').val();
+
+
+        //This is the Ajax post.Observe carefully. It is nothing but details of where_to_post,what_to_post
+        //Send data
+         $.ajax({
+               url : window.location.href, // the endpoint,commonly same url
+               type : "POST", // http method
+               data : { csrfmiddlewaretoken : csrftoken,
+               company : company
+         }, // data sent with the post request
+
+         // handle a successful response
+         success : function(json) {
+         console.log(json); // another sanity check
+         //On success show the data posted to server as a message
+         //alert('Hi   '+json['emp_list'][0].e_name);
+        // $('#select2').append('<option value="foo" selected="selected">Foo</option>');
+
+                var select = $('#meeting_id');
+                if(select.prop) {
+                  var options = select.prop('options');
+                }
+                else {
+                  var options = select.attr('options');
+                }
+                $('option', select).remove();
+
+                $.each(json['meeting_list'], function(val, text) {
+                    options[options.length] = new Option(json['meeting_list'][val].meeting_name, json['meeting_list'][val].meeting_id);
+                });
+                //select.val(selectedOption);
+         },
+
+         // handle a non-successful response
+         error : function(xhr,errmsg,err) {
+
+         console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+         }
+         });
+        });
+    </script>
+
+{% endblock %}
